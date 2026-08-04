@@ -1,0 +1,433 @@
+@import "tailwindcss";
+
+@theme {
+  --color-obsidian: #0B0B0C;
+  --color-obsidian-light: #121215;
+  --color-obsidian-lighter: #1a1a1f;
+  --color-midnight: #0d1117;
+  --color-espresso: #1c1410;
+  --color-gold: #D4AF37;
+  --color-gold-light: #e8cc6e;
+  --color-gold-dark: #b8941f;
+  --color-brass: #c5a455;
+  --color-cream: #F5F5F0;
+  --color-ivory: #FAFAF5;
+  --color-muted: #8a8a8a;
+  --color-muted-light: #a0a0a0;
+  --color-surface: rgba(255, 255, 255, 0.04);
+  --color-surface-hover: rgba(255, 255, 255, 0.08);
+  --color-border: rgba(212, 175, 55, 0.15);
+  --color-border-strong: rgba(212, 175, 55, 0.35);
+
+  --color-light-bg: #FAFAF5;
+  --color-light-surface: #FFFFFF;
+  --color-light-text: #1a1a1f;
+  --color-light-muted: #6b6b6b;
+  --color-light-border: rgba(0, 0, 0, 0.08);
+
+  --font-serif: Playfair Display, Georgia, serif;
+  --font-sans: Inter, system-ui, -apple-system, sans-serif;
+}
+
+/* Base styles */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-obsidian);
+  color: var(--color-cream);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body.light-mode {
+  background-color: var(--color-light-bg);
+  color: var(--color-light-text);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-obsidian);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-gold-dark);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold);
+}
+
+/* Utility classes */
+.font-serif {
+  font-family: var(--font-serif);
+}
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+.text-gold {
+  color: var(--color-gold);
+}
+.bg-gold {
+  background-color: var(--color-gold);
+}
+
+/* Glassmorphism */
+.glass {
+  background: rgba(11, 11, 12, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(212, 175, 55, 0.1);
+}
+
+.glass-light {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+/* Gold gradient text */
+.gold-gradient-text {
+  background: linear-gradient(135deg, var(--color-gold), var(--color-gold-light), var(--color-brass));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Separator line */
+.gold-line {
+  width: 80px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+}
+
+.gold-line-wide {
+  width: 160px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+}
+
+/* Card hover glow */
+.card-glow {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+}
+.card-glow:hover {
+  box-shadow: 0 8px 40px rgba(212, 175, 55, 0.12), 0 0 0 1px rgba(212, 175, 55, 0.15);
+  transform: translateY(-4px);
+}
+
+/* Button styles */
+.btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 48px;
+  padding: 12px 28px;
+  border-radius: 9999px;
+  border: 1px solid transparent;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  transition: all 0.25s ease;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-gold), var(--color-gold-dark));
+  color: var(--color-obsidian);
+  box-shadow: 0 6px 22px rgba(212, 175, 55, 0.18);
+}
+.btn-primary:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, var(--color-gold-light), var(--color-gold));
+  box-shadow: 0 10px 28px rgba(212, 175, 55, 0.22);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: var(--color-gold);
+  border-color: rgba(212, 175, 55, 0.45);
+}
+.btn-secondary:hover {
+  background: rgba(212, 175, 55, 0.08);
+  color: var(--color-gold);
+  transform: translateY(-1px);
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--color-gold);
+  border-color: rgba(212, 175, 55, 0.25);
+}
+.btn-ghost:hover {
+  background: rgba(212, 175, 55, 0.08);
+  box-shadow: 0 6px 18px rgba(212, 175, 55, 0.14);
+  transform: translateY(-1px);
+}
+
+.btn-primary,
+.btn-secondary,
+.btn-ghost {
+  padding: 12px 24px;
+  border-radius: 9999px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Input styles */
+.input-luxury {
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+  color: var(--color-cream);
+  padding: 12px 0;
+  font-family: var(--font-sans);
+  font-size: 0.95rem;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.3s ease;
+}
+.input-luxury:focus {
+  border-bottom-color: var(--color-gold);
+}
+.input-luxury::placeholder {
+  color: var(--color-muted);
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* QR Code mock */
+.qr-pattern {
+  background-image:
+    linear-gradient(45deg, var(--color-obsidian) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--color-obsidian) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--color-obsidian) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--color-obsidian) 75%);
+  background-size: 8px 8px;
+  background-position: 0 0, 0 4px, 4px -4px, -4px 0px;
+}
+
+@media (max-width: 640px) {
+  .btn-gold,
+  .btn-ghost {
+    width: 100%;
+    padding-inline: 1.25rem;
+  }
+}
+
+
+
+main {
+  width: 100%;
+}
+
+img {
+  max-width: 100%;
+}
+
+.page-shell {
+  width: min(100% - 2rem, 80rem);
+  margin-inline: auto;
+}
+
+.page-shell-narrow {
+  width: min(100% - 2rem, 64rem);
+  margin-inline: auto;
+}
+
+.section-pad {
+  padding-block: clamp(3rem, 6vw, 5rem);
+}
+
+.section-title {
+  font-size: clamp(1.75rem, 5vw, 3.5rem);
+  line-height: 1.05;
+}
+
+.section-copy {
+  max-width: 42rem;
+  margin-inline: auto;
+  line-height: 1.75;
+}
+
+/* Gold button styles */
+.btn-gold {
+  background: linear-gradient(135deg, var(--color-gold), var(--color-gold-dark));
+  color: var(--color-obsidian) !important;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  font-size: 0.875rem;
+  padding: 12px 24px;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  border: none;
+  border-radius: 9999px;
+  box-shadow: 0 6px 22px rgba(212, 175, 55, 0.18);
+}
+.btn-gold:hover {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, var(--color-gold-light), var(--color-gold));
+  box-shadow: 0 10px 28px rgba(212, 175, 55, 0.22);
+}
+
+/* Light mode global overrides */
+body.light-mode {
+  background-color: var(--color-light-bg);
+  color: var(--color-light-text);
+}
+
+body.light-mode .input-luxury {
+  color: var(--color-light-text);
+  border-bottom-color: rgba(0, 0, 0, 0.15);
+}
+
+body.light-mode .input-luxury::placeholder {
+  color: var(--color-light-muted);
+}
+
+body.light-mode .glass {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  color: var(--color-light-text);
+}
+
+body.light-mode .glass-light {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  color: var(--color-light-text);
+}
+
+/* Ensure text elements in cards and components are readable in light mode */
+body.light-mode .text-cream,
+body.light-mode .text-ivory {
+  color: var(--color-light-text);
+}
+
+body.light-mode .text-cream\/75,
+body.light-mode .text-cream\/80,
+body.light-mode .text-cream\/70 {
+  color: rgba(26, 26, 31, 0.8);
+}
+
+body.light-mode .text-white\/70,
+body.light-mode .text-white\/80 {
+  color: rgba(26, 26, 31, 0.75);
+}
+
+body.light-mode .text-muted {
+  color: var(--color-light-muted);
+}
+
+body.light-mode .border-white\/5,
+body.light-mode .border-white\/10 {
+  border-color: rgba(0, 0, 0, 0.08);
+}
+
+body.light-mode .bg-obsidian-light,
+body.light-mode .bg-obsidian-lighter {
+  background-color: var(--color-light-surface);
+}
+
+/* Custom Dropdown (Select/Option) Styling */
+select, select.input-luxury {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+  border: 1px solid var(--color-gold) !important;
+  border-radius: 8px !important;
+  padding: 10px 14px !important;
+  outline: none !important;
+  font-family: var(--font-sans) !important;
+  transition: all 0.3s ease !important;
+}
+
+select:focus, select.input-luxury:focus {
+  border-color: var(--color-gold-light) !important;
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.2) !important;
+}
+
+select option {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+  padding: 10px !important;
+}
+
+/* Hover/checked option states */
+select option:hover,
+select option:focus,
+select option:active,
+select option:checked {
+  background-color: var(--color-gold) !important;
+  color: #1a1a1a !important;
+}
+
+/* Light Mode Overrides */
+body.light-mode select,
+body.light-mode select.input-luxury {
+  background-color: #ffffff !important;
+  color: #222222 !important;
+  border: 1px solid rgba(212, 175, 55, 0.5) !important;
+}
+
+body.light-mode select:focus,
+body.light-mode select.input-luxury:focus {
+  border-color: var(--color-gold) !important;
+  box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.15) !important;
+}
+
+body.light-mode select option {
+  background-color: #ffffff !important;
+  color: #222222 !important;
+}
+
+body.light-mode select option:hover,
+body.light-mode select option:focus,
+body.light-mode select option:active,
+body.light-mode select option:checked {
+  background-color: var(--color-gold) !important;
+  color: #222222 !important;
+}
+
+
