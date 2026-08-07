@@ -26,7 +26,7 @@ export function AuthProvider({ children }) {
   }, [fetchProfile]);
 
   const register = useCallback(async ({ name, email, password }) => {
-    const data = await apiFetch('/auth/register', {
+    const data = await apiFetch('/api/auth/register', {
       method: 'POST',
       body: JSON.stringify({ name, email, password }),
     });
@@ -38,7 +38,7 @@ export function AuthProvider({ children }) {
   }, []);
 
   const login = useCallback(async ({ email, password }) => {
-    const data = await apiFetch('/auth/login', {
+    const data = await apiFetch('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
