@@ -17,6 +17,15 @@ const AdminPage = () => {
   const [eventRequests, setEventRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // Broadcast states
+  const [recipients, setRecipients] = useState([]);
+  const [selectedEmails, setSelectedEmails] = useState([]);
+  const [broadcastSubject, setBroadcastSubject] = useState('');
+  const [broadcastMessage, setBroadcastMessage] = useState('');
+  const [broadcastSending, setBroadcastSending] = useState(false);
+  const [broadcastResult, setBroadcastResult] = useState(null);
+  const [recipientsSearch, setRecipientsSearch] = useState('');
+
   // Menu Add Item Form state
   const [newItem, setNewItem] = useState({
     name: '',
@@ -63,7 +72,7 @@ const AdminPage = () => {
   const fetchData = async () => {
     try {
       setLoading(true);
-      const [usersData, ordersData, resData, menuData, rewardsData, historyData, reviewsData, eventsData] = await Promise.all([
+      const [usersData, ordersData, resData, menuData, rewardsData, historyData, reviewsData, eventsData, recipientsData] = await Promise.all([
         apiFetch('/admin/users').catch(() => []),
         apiFetch('/admin/orders').catch(() => []),
         apiFetch('/admin/reservations').catch(() => []),
@@ -71,7 +80,8 @@ const AdminPage = () => {
         apiFetch('/rewards?all=true').catch(() => []),
         apiFetch('/rewards/history').catch(() => []),
         apiFetch('/admin/reviews').catch(() => []),
-        apiFetch('/events/requests').catch(() => [])
+        apiFetch('/events/requests').catch(() => []),
+        apiFetch('/broadcast/recipients').catch(() => [])
       ]);
       setUsers(usersData);
       setOrders(ordersData);
@@ -81,10 +91,76 @@ const AdminPage = () => {
       setRewardHistory(historyData);
       setReviews(reviewsData);
       setEventRequests(eventsData);
+      setRecipients(recipientsData);
     } catch (error) {
       console.error('Error fetching admin data:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Email Broadcast Handlers
+  const handleToggleSelectEmail = (email) => {
+    setSelectedEmails(prev =>
+      prev.includes(email) ? prev.filter(e => e !== email) : [...prev, email]
+    );
+  };
+
+  const handleToggleSelectAll = (filteredRecipients) => {
+    const filteredEmails = filteredRecipients.map(r => r.email);
+    const allSelected = filteredEmails.every(email => selectedEmails.includes(email));
+
+    if (allSelected) {
+      setSelectedEmails(prev => prev.filter(email => !filteredEmails.includes(email)));
+    } else {
+      setSelectedEmails(prev => {
+        const newSelection = [...prev];
+        filteredEmails.forEach(email => {
+          if (!newSelection.includes(email)) {
+            newSelection.push(email);
+          }
+        });
+        return newSelection;
+      });
+    }
+  };
+
+  const handleSendBroadcast = async (e) => {
+    e.preventDefault();
+    if (!broadcastSubject.trim() || !broadcastMessage.trim() || selectedEmails.length === 0) {
+      return;
+    }
+
+    try {
+      setBroadcastSending(true);
+      setBroadcastResult(null);
+
+      const res = await apiFetch('/broadcast/send', {
+        method: 'POST',
+        body: JSON.stringify({
+          subject: broadcastSubject,
+          message: broadcastMessage,
+          selectedEmails
+        })
+      });
+
+      setBroadcastResult({
+        type: 'success',
+        text: `Broadcast sent successfully! Success: ${res.successCount}, Failed: ${res.failedCount}.`
+      });
+
+      // Clear input fields and selection on success
+      setBroadcastSubject('');
+      setBroadcastMessage('');
+      setSelectedEmails([]);
+    } catch (err) {
+      console.error('Error sending broadcast:', err);
+      setBroadcastResult({
+        type: 'error',
+        text: err.message || 'Failed to send broadcast. Please try again.'
+      });
+    } finally {
+      setBroadcastSending(false);
     }
   };
 
@@ -296,9 +372,9 @@ const AdminPage = () => {
     { id: 'menu', label: 'Menu Management' },
     { id: 'rewards', label: 'Rewards Management' },
     { id: 'reviews', label: 'Reviews' },
-    { id: 'events', label: 'Event Requests' }
+    { id: 'events', label: 'Event Requests' },
+    { id: 'broadcast', label: 'Email Broadcast' }
   ];
-
   return (
     <div className={`min-h-screen pt-28 pb-12 transition-colors duration-300 ${bgClass}`}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -852,6 +928,171 @@ const AdminPage = () => {
                       )}
                     </tbody>
                   </table>
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'broadcast' && (
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                {/* Compose Form */}
+                <div className={`lg:col-span-6 rounded-2xl border ${borderClass} ${cardClass} p-6 shadow-md h-fit`}>
+                  <h2 className="text-2xl font-serif mb-6 text-amber-500 font-bold">Compose Broadcast</h2>
+                  
+                  {broadcastResult && (
+                    <div className={`p-4 rounded-lg mb-6 text-sm ${
+                      broadcastResult.type === 'success' 
+                        ? (isDark ? 'bg-green-500/10 text-green-400 border border-green-500/20' : 'bg-green-50 text-green-800 border border-green-200')
+                        : (isDark ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-red-50 text-red-800 border border-red-200')
+                    }`}>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold">{broadcastResult.type === 'success' ? '✓' : '✗'}</span>
+                        <p>{broadcastResult.text}</p>
+                      </div>
+                    </div>
+                  )}
+
+                  <form onSubmit={handleSendBroadcast} className="space-y-4">
+                    <div>
+                      <label className={`block text-xs uppercase tracking-wider ${textLabel} mb-1`}>Subject</label>
+                      <input 
+                        type="text" 
+                        value={broadcastSubject}
+                        onChange={e => setBroadcastSubject(e.target.value)}
+                        placeholder="Enter email subject"
+                        className={`w-full p-2.5 rounded-lg border text-sm outline-none transition-all ${textInput}`}
+                        disabled={broadcastSending}
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label className={`block text-xs uppercase tracking-wider ${textLabel} mb-1`}>Message Body</label>
+                      <textarea 
+                        rows={8}
+                        value={broadcastMessage}
+                        onChange={e => setBroadcastMessage(e.target.value)}
+                        placeholder="Write your email broadcast message here..."
+                        className={`w-full p-2.5 rounded-lg border text-sm outline-none transition-all resize-none ${textInput}`}
+                        disabled={broadcastSending}
+                        required
+                      />
+                    </div>
+
+                    <div className="pt-2">
+                      <button 
+                        type="submit" 
+                        disabled={broadcastSending || selectedEmails.length === 0 || !broadcastSubject.trim() || !broadcastMessage.trim()}
+                        className={`w-full py-3 rounded-lg font-bold text-sm tracking-wider uppercase transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer ${
+                          broadcastSending || selectedEmails.length === 0 || !broadcastSubject.trim() || !broadcastMessage.trim()
+                            ? 'bg-neutral-600 text-neutral-400 cursor-not-allowed opacity-50'
+                            : (isDark ? 'bg-amber-500 text-neutral-900 hover:bg-amber-400 shadow-md shadow-amber-500/10' : 'bg-amber-600 text-white hover:bg-amber-700 shadow-md shadow-amber-600/10')
+                        }`}
+                      >
+                        {broadcastSending ? (
+                          <>
+                            <svg className="animate-spin h-5 w-5 text-current" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                            </svg>
+                            Sending Broadcast...
+                          </>
+                        ) : (
+                          `Send Broadcast (${selectedEmails.length})`
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </div>
+
+                {/* Recipient Selector */}
+                <div className={`lg:col-span-6 rounded-2xl border ${borderClass} ${cardClass} p-6 shadow-md`}>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+                    <div>
+                      <h2 className="text-2xl font-serif text-amber-500 font-bold">Select Recipients</h2>
+                      <p className={`text-xs mt-1 ${textMuted}`}>
+                        Selected {selectedEmails.length} of {recipients.length} total active recipients
+                      </p>
+                    </div>
+                    {/* Search Input */}
+                    <div className="relative">
+                      <input 
+                        type="text"
+                        placeholder="Search emails..."
+                        value={recipientsSearch}
+                        onChange={e => setRecipientsSearch(e.target.value)}
+                        className={`w-full sm:w-60 p-2 pl-3 rounded-lg border text-sm outline-none transition-all ${textInput}`}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="max-h-[500px] overflow-y-auto border rounded-xl overflow-hidden border-neutral-700/50">
+                    <table className="w-full text-left border-collapse">
+                      <thead>
+                        <tr className={isDark ? 'bg-neutral-800 border-b border-neutral-700' : 'bg-neutral-100 border-b border-neutral-200'}>
+                          <th className="p-4 w-12 text-center">
+                            <input 
+                              type="checkbox"
+                              checked={
+                                recipients.length > 0 && 
+                                recipients.filter(r => r.email.toLowerCase().includes(recipientsSearch.toLowerCase())).length > 0 &&
+                                recipients
+                                  .filter(r => r.email.toLowerCase().includes(recipientsSearch.toLowerCase()))
+                                  .every(r => selectedEmails.includes(r.email))
+                              }
+                              onChange={() => handleToggleSelectAll(
+                                recipients.filter(r => r.email.toLowerCase().includes(recipientsSearch.toLowerCase()))
+                              )}
+                              className="rounded border-neutral-500 text-amber-500 focus:ring-amber-500 h-4 w-4 cursor-pointer"
+                            />
+                          </th>
+                          <th className={`p-4 font-serif font-medium ${isDark ? 'text-neutral-200' : 'text-neutral-800'}`}>Email</th>
+                          <th className={`p-4 font-serif font-medium ${isDark ? 'text-neutral-200' : 'text-neutral-800'}`}>Source</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {recipients
+                          .filter(r => r.email.toLowerCase().includes(recipientsSearch.toLowerCase()))
+                          .map((r, idx) => {
+                            const isSelected = selectedEmails.includes(r.email);
+                            return (
+                              <tr 
+                                key={idx}
+                                className={`border-b ${borderClass} transition-colors ${
+                                  isSelected 
+                                    ? (isDark ? 'bg-amber-500/5 hover:bg-amber-500/10' : 'bg-amber-600/5 hover:bg-amber-600/10')
+                                    : (isDark ? 'hover:bg-neutral-700/20' : 'hover:bg-neutral-100')
+                                }`}
+                              >
+                                <td className="p-4 text-center">
+                                  <input 
+                                    type="checkbox"
+                                    checked={isSelected}
+                                    onChange={() => handleToggleSelectEmail(r.email)}
+                                    className="rounded border-neutral-500 text-amber-500 focus:ring-amber-500 h-4 w-4 cursor-pointer"
+                                  />
+                                </td>
+                                <td className="p-4 text-sm font-medium">{r.email}</td>
+                                <td className="p-4">
+                                  <span className={`text-xs px-2.5 py-1 rounded-full font-medium ${
+                                    r.source.includes('&') 
+                                      ? (isDark ? 'bg-purple-500/10 text-purple-400' : 'bg-purple-50 text-purple-700')
+                                      : r.source.includes('User') 
+                                        ? (isDark ? 'bg-blue-500/10 text-blue-400' : 'bg-blue-50 text-blue-700')
+                                        : (isDark ? 'bg-emerald-500/10 text-emerald-400' : 'bg-emerald-50 text-emerald-700')
+                                  }`}>
+                                    {r.source}
+                                  </span>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        {recipients.filter(r => r.email.toLowerCase().includes(recipientsSearch.toLowerCase())).length === 0 && (
+                          <tr>
+                            <td colSpan="3" className={`p-8 text-center ${textMuted}`}>No recipients found</td>
+                          </tr>
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
             )}

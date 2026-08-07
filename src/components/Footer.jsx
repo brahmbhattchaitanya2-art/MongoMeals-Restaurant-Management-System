@@ -9,6 +9,8 @@ import { apiFetch } from '../services/api';
 export default function Footer() {
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
+  const [message, setMessage] = useState('');
+  const [isError, setIsError] = useState(false);
   const { isDark } = useTheme();
   const { isAuthenticated } = useAuth();
 
@@ -16,15 +18,28 @@ export default function Footer() {
     e.preventDefault();
     if (email) {
       try {
-        await apiFetch('/users/subscribe-newsletter', {
+        const responseData = await apiFetch('/users/subscribe-newsletter', {
           method: 'POST',
           body: JSON.stringify({ email })
         });
+        setMessage(responseData?.message || 'Welcome to the inner circle');
+        setIsError(false);
         setSubscribed(true);
         setEmail('');
-        setTimeout(() => setSubscribed(false), 3000);
+        setTimeout(() => {
+          setSubscribed(false);
+          setMessage('');
+        }, 5000);
       } catch (err) {
         console.error('Subscription error:', err);
+        setMessage(err.message || 'Error subscribing.');
+        setIsError(true);
+        setSubscribed(true);
+        setTimeout(() => {
+          setSubscribed(false);
+          setMessage('');
+          setIsError(false);
+        }, 5000);
       }
     }
   };
@@ -106,9 +121,9 @@ export default function Footer() {
                     <motion.p
                       initial={{ opacity: 0, y: -5 }}
                       animate={{ opacity: 1, y: 0 }}
-                      className="text-gold text-xs uppercase tracking-wider font-semibold"
+                      className={`text-xs uppercase tracking-wider font-semibold ${isError ? 'text-red-500' : 'text-gold'}`}
                     >
-                      ✓ Welcome to the inner circle
+                      {isError ? '✗ ' : '✓ '} {message}
                     </motion.p>
                   )}
                 </>

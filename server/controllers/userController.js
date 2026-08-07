@@ -4,6 +4,7 @@ const RewardHistory = require('../models/RewardHistory');
 const Order = require('../models/Order');
 const Reservation = require('../models/Reservation');
 const Newsletter = require('../models/Newsletter');
+const CommunitySubscriber = require('../models/CommunitySubscriber');
 const { sendEmail } = require('../utils/mailService');
 
 const calculateTier = (points) => {
@@ -219,7 +220,6 @@ const completeProfilePoints = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
-
 const subscribeNewsletter = async (req, res) => {
   const { email } = req.body;
 
@@ -227,16 +227,36 @@ const subscribeNewsletter = async (req, res) => {
     return res.status(400).json({ message: 'Email address is required.' });
   }
 
+  // Handle cases where email might be passed as non-string
+  const emailStr = typeof email === 'string' ? email : '';
+  const trimmedEmail = emailStr.trim();
+
+  // Basic email validation
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(trimmedEmail)) {
+    return res.status(400).json({ message: 'Please enter a valid email address.' });
+  }
+
+  const normalizedEmail = trimmedEmail.toLowerCase();
+
   try {
-    let subscription = await Newsletter.findOne({ email: email.toLowerCase() });
+    let subscriber = await CommunitySubscriber.findOne({ email: normalizedEmail });
     
-    if (!subscription) {
-      subscription = await Newsletter.create({ email: email.toLowerCase() });
+    if (subscriber) {
+      if (subscriber.subscribed) {
+        return res.status(200).json({ message: 'You are already subscribed to our community!' });
+      } else {
+        subscriber.subscribed = true;
+        subscriber.joinedAt = new Date();
+        await subscriber.save();
+      }
+    } else {
+      subscriber = await CommunitySubscriber.create({ email: normalizedEmail });
     }
 
     // Send newsletter welcome email
     sendEmail({
-      to: email,
+      to: normalizedEmail,
       subject: 'Welcome to MongoMeals Community',
       text: `Hello,\n\nThank you for subscribing to the MongoMeals inner circle! You are now part of our exclusive community. You will receive future offers, updates, and seasonal tasting menu highlights.\n\nBest regards,\nThe MongoMeals Team`
     });

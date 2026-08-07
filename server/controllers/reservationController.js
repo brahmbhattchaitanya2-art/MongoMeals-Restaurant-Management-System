@@ -113,6 +113,9 @@ const createReservation = async (req, res) => {
 
     res.status(201).json(savedReservation);
   } catch (error) {
+    if (error.code === 11000) {
+      return res.status(409).json({ message: 'This table has just been booked by another user. Please select another table or time.' });
+    }
     res.status(400).json({ message: 'Error creating reservation', error: error.message });
   }
 };

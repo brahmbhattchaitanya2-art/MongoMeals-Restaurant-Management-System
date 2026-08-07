@@ -12,4 +12,14 @@ const reservationSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now }
 });
 
+reservationSchema.index(
+  { date: 1, time: 1, table: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      status: { $in: ['Confirmed', 'Pending', 'Completed'] }
+    }
+  }
+);
+
 module.exports = mongoose.model('Reservation', reservationSchema);

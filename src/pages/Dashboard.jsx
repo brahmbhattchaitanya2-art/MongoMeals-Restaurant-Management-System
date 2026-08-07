@@ -73,7 +73,7 @@ export default function Dashboard() {
               </div>
               <div className="text-center md:text-left">
                 <h1 className={`font-serif text-2xl md:text-3xl ${textPrimary}`}>{isAuthenticated ? user?.name : 'Guest Profile'}</h1>
-                <p className={`${textMuted} text-sm mt-1`}>{isAuthenticated ? user?.email : 'Sign in to access your account'} • Gold Tier</p>
+                <p className={`${textMuted} text-sm mt-1`}>{isAuthenticated ? `${user?.email} • ${user?.tier || 'Silver'} Tier` : 'Sign in to access your account'}</p>
                 <p className="text-gold text-xs tracking-wider uppercase mt-2">
                   {orders.length} orders • {reservations.length} upcoming reservations
                 </p>

@@ -48,3 +48,7 @@ logs/
 # Uploads
 server/uploads/MongoMeals_final/
 MongoMeals_final/
+/MongoMeals_final/
+*.pptx
+*.pdf
+requirements.txt

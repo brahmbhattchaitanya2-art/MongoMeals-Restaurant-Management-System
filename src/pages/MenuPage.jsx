@@ -16,6 +16,7 @@ export default function MenuPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const [sortOption, setSortOption] = useState('recommended');
   const [priceFilter, setPriceFilter] = useState('all');
+  const [foodTypeFilter, setFoodTypeFilter] = useState('All');
   const [isScrolled, setIsScrolled] = useState(false);
   
   const { addItem, setIsDrawerOpen } = useCart();
@@ -85,7 +86,14 @@ export default function MenuPage() {
     else if (priceFilter === 'medium') priceMatch = item.price >= 1000 && item.price <= 2500;
     else if (priceFilter === 'high') priceMatch = item.price > 2500;
 
-    return catMatch && searchMatch && priceMatch;
+    let typeMatch = true;
+    if (foodTypeFilter === 'Veg') {
+      typeMatch = item.type === 'veg' || item.type === 'vegan';
+    } else if (foodTypeFilter === 'Non-Veg') {
+      typeMatch = item.type === 'non-veg';
+    }
+
+    return catMatch && searchMatch && priceMatch && typeMatch;
   }).sort((a, b) => {
     if (sortOption === 'price-asc') return a.price - b.price;
     if (sortOption === 'price-desc') return b.price - a.price;
@@ -183,6 +191,19 @@ export default function MenuPage() {
               </div>
               
               <div className="flex items-center gap-4 w-full sm:w-auto">
+                <div className="relative group">
+                  <select 
+                    value={foodTypeFilter}
+                    onChange={(e) => setFoodTypeFilter(e.target.value)}
+                    className={`appearance-none rounded-full py-3 pl-5 pr-10 text-[14px] outline-none cursor-pointer border-[#d4af37] transition-all ${isDark ? 'bg-neutral-950 text-white border' : 'bg-white text-black border'}`}
+                  >
+                    <option value="All" className={isDark ? 'bg-neutral-950 text-white' : 'bg-white text-black'}>All Types</option>
+                    <option value="Veg" className={isDark ? 'bg-neutral-950 text-white' : 'bg-white text-black'}>Veg</option>
+                    <option value="Non-Veg" className={isDark ? 'bg-neutral-950 text-white' : 'bg-white text-black'}>Non-Veg</option>
+                  </select>
+                  <ChevronDown size={14} className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-[#d4af37]" />
+                </div>
+
                 <div className="relative group">
                   <select 
                     value={priceFilter}

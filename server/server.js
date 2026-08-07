@@ -13,6 +13,7 @@ const eventRoutes = require('./routes/eventRoutes');
 const userRoutes = require('./routes/userRoutes');
 const rewardRoutes = require('./routes/rewardRoutes');
 const reviewRoutes = require('./routes/reviewRoutes');
+const broadcastRoutes = require('./routes/broadcastRoutes');
 
 const app = express();
 
@@ -37,6 +38,7 @@ app.use('/api/events', eventRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/rewards', rewardRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/broadcast', broadcastRoutes);
 
 app.get('/api/seed', async (req, res) => {
   try {
