@@ -76,7 +76,7 @@ const AdminPage = () => {
         apiFetch('/admin/users').catch(() => []),
         apiFetch('/admin/orders').catch(() => []),
         apiFetch('/admin/reservations').catch(() => []),
-        apiFetch('/menu').catch(() => []),
+        apiFetch('/api/menu').catch(() => []),
         apiFetch('/rewards?all=true').catch(() => []),
         apiFetch('/rewards/history').catch(() => []),
         apiFetch('/admin/reviews').catch(() => []),
@@ -181,7 +181,7 @@ const AdminPage = () => {
         formData.append('image', newItem.imageFile);
       }
 
-      await apiFetch('/menu', {
+      await apiFetch('/api/menu', {
         method: 'POST',
         body: formData
       });
@@ -223,7 +223,7 @@ const AdminPage = () => {
         formData.append('image', editingItem.image);
       }
 
-      await apiFetch(`/menu/${editingItem._id}`, {
+      await apiFetch(`/api/menu/${editingItem._id}`, {
         method: 'PUT',
         body: formData
       });
@@ -238,7 +238,7 @@ const AdminPage = () => {
   const handleDeleteMenuItem = async (id) => {
     if (window.confirm('Are you sure you want to delete this menu item?')) {
       try {
-        await apiFetch(`/menu/${id}`, {
+        await apiFetch(`/api/menu/${id}`, {
           method: 'DELETE'
         });
         fetchData();

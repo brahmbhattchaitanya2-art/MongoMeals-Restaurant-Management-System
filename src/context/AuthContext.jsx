@@ -10,7 +10,7 @@ export function AuthProvider({ children }) {
   const fetchProfile = useCallback(() => {
     const token = localStorage.getItem('mongomeals-token');
     if (token) {
-      apiFetch('/auth/profile')
+      apiFetch('/api/auth/profile')
         .then((userData) => {
           setUser(userData);
         })
