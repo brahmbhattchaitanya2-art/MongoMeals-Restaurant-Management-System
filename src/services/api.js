@@ -6,7 +6,7 @@ const getAuthHeaders = () => {
 };
 
 export const apiFetch = async (endpoint, options = {}) => {
-  const url = `${API_URL}${endpoint}`;
+  const url = `${API_URL.replace(/\/+$/, '')}/${endpoint.replace(/^\/+/, '')}`;
   
   const headers = {
     ...getAuthHeaders(),
