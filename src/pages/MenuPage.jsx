@@ -29,7 +29,7 @@ export default function MenuPage() {
   const [menuItems, setMenuItems] = useState([]);
 
   useEffect(() => {
-    apiFetch('/menu')
+    apiFetch('api/menu')
       .then(data => setMenuItems(data))
       .catch(err => console.error('Error fetching menu items:', err));
   }, []);
