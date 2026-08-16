@@ -83,7 +83,7 @@ The authentication system uses:
 
 ### Basic Authentication Flow
 
-text
+```
 User Registration / Login
           ↓
 Express Backend
@@ -97,7 +97,7 @@ Generate JWT
 Authenticated User
           ↓
 Access Protected Features
-
+```
 
 Passwords are not stored directly as plain text. *bcryptjs* hashes passwords before they are stored in MongoDB.
 
@@ -152,7 +152,7 @@ MongoMeals includes a *cart drawer*, allowing users to quickly view selected ite
 
 ### Basic Flow
 
-text
+```
 Browse Menu
      ↓
 Select Food
@@ -164,7 +164,7 @@ Review Cart
 Place Order
      ↓
 Order Stored in MongoDB
-
+```
 
 Customers can later view their order information through their profile.
 
@@ -262,7 +262,7 @@ MongoMeals automatically determines the customer's loyalty tier according to the
 
 ### Loyalty Flow
 
-text
+```
 Customer Activities
         ↓
 Earn Points
@@ -274,7 +274,7 @@ Calculate Loyalty Tier
 Silver / Gold / Platinum
 
 
----
+```
 
 ## ⭐ 7. Reviews
 
@@ -288,7 +288,7 @@ When a review is approved, the customer can receive:
 
 ### Workflow
 
-text
+```
 Customer Review
       ↓
 Submitted
@@ -301,7 +301,7 @@ Approved
       ↓
 +50 Loyalty Points
 
-
+```
 ---
 
 ## 🎉 8. Event Booking Requests
@@ -318,7 +318,7 @@ The event request is stored in the database and can be viewed and managed throug
 
 ### Workflow
 
-text
+```
 Customer
     ↓
 Select Event / Venue
@@ -333,7 +333,7 @@ Admin Dashboard
     ↓
 Manage Request
 
-
+```
 ---
 
 ## 📧 9. Newsletter Subscription
@@ -379,7 +379,7 @@ The administrator can:
 
 *Nodemailer* is used to send emails through SMTP.
 
-text
+```
 Registered Users
        +
 Community Subscribers
@@ -397,7 +397,7 @@ Nodemailer
 SMTP / Gmail
        ↓
 Email Delivered
-
+```
 
 The system can skip invalid email addresses so one incorrect address does not stop the complete email process.
 
@@ -466,7 +466,7 @@ Examples include:
 
 ### Frontend Flow
 
-text
+```
 User Action
      ↓
 React Component
@@ -478,7 +478,7 @@ Backend
 Response
      ↓
 React Updates UI
-
+```
 
 ---
 
@@ -503,7 +503,7 @@ The backend handles:
 
 ### Backend Flow
 
-text
+```
 React Frontend
       ↓
 HTTP Request
@@ -520,7 +520,7 @@ Response
       ↓
 React Frontend
 
-
+```
 ---
 
 ## 🍃 15. MongoDB Database
@@ -542,7 +542,7 @@ The database stores information such as:
 
 ### Database Flow
 
-text
+```
 Express Backend
        ↓
 Mongoose Model
@@ -551,7 +551,7 @@ MongoDB
        ↓
 Stored Data
 
-
+```
 ---
 
 ## 🔗 16. REST API Communication
@@ -569,7 +569,7 @@ DELETE  → Delete data
 
 ### Example
 
-text
+```
 React Frontend
       ↓
 POST Reservation
@@ -586,7 +586,7 @@ Return Response
       ↓
 React Updates UI
 
-
+```
 ---
 
 # 🛠️ Technology Stack
@@ -614,7 +614,7 @@ React Updates UI
 
 # 🏗️ Simplified System Architecture
 
-text
+```
                          MONGOMEALS
                               │
               ┌───────────────┴───────────────┐
@@ -643,12 +643,12 @@ text
         │                   │
       Rewards             Events
 
-
+```
 ---
 
 # 📁 Project Structure
 
-text
+```
 MongoMeals/
 │
 ├── assets/
@@ -685,7 +685,7 @@ MongoMeals/
 ├── .env.example
 ├── .gitignore
 └── README.md
-
+```
 
 > *Note:* The exact folder structure may vary depending on the current version of the project.
 
