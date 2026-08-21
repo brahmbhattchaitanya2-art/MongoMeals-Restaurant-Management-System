@@ -9,6 +9,18 @@ Customers can explore the food menu, place orders, reserve tables, request event
 Administrators can manage users, orders, reservations, reviews, event requests, rewards, and email communication through a dedicated *Admin Dashboard*.
 
 ---
+---
+
+## 🎥 Project Demo
+
+▶️ *Click the thumbnail below to watch the full MongoMeals demo on YouTube*
+
+[![MongoMeals - MERN Restaurant Management System](assets/mongomeals-demo-thumbnail.png)](https://youtu.be/7CybUtZD3ZQ?si=JSMDi-VQg6SbYnhs)
+
+---
+
+
+
 
 ## 🌐 Live Project
 
